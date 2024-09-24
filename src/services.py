@@ -13,7 +13,7 @@ file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
 
 
-def search_in_file(my_list: list[dict], search_str) -> list[dict]:
+def search_in_file(my_list: list[dict], search_str: str) -> list[dict]:
     """Функция поиска принемаемая список словарей и ключевое слово, а возвращает список транзакций выбраных по ключевом
     словам в 'категориях' и 'описании'"""
 
@@ -22,13 +22,13 @@ def search_in_file(my_list: list[dict], search_str) -> list[dict]:
     logger.info("Проверка на пустые значения")
     for item in my_list:
         if (
-            item['Категория'] is None or
-            item['Категория'] == "nan" or
-            item['Описание'] is None or
-            item['Описание'] == "nan"
+            item["Категория"] is None
+            or item["Категория"] == "nan"
+            or item["Описание"] is None
+            or item["Описание"] == "nan"
         ):
             item.clear()
-        elif search_str in str(item['Категория']) or search_str in str(item['Описание']):
+        elif search_str in str(item["Категория"]) or search_str in str(item["Описание"]):
             search_list.append(item)
     logger.info("Формирования списка по критериям и конец программы")
     return search_list
@@ -42,13 +42,13 @@ def filter_by_name(my_list: list[dict]) -> list[dict]:
     logger.info("Проверка на пустые значения")
     for item in my_list:
         if (
-                item['Категория'] is None or
-                item['Категория'] == "nan" or
-                item['Описание'] is None or
-                item['Описание'] == "nan"
+            item["Категория"] is None
+            or item["Категория"] == "nan"
+            or item["Описание"] is None
+            or item["Описание"] == "nan"
         ):
             item.clear()
-        elif 'Перевод' in str(item['Категория']) and re.search(r'\D+ \D\.', str(item['Описание'])):
+        elif "Перевод" in str(item["Категория"]) and re.search(r"\D+ \D\.", str(item["Описание"])):
             search_list.append(item)
     logger.info("Формирования списка по критериям и конец программы")
     return search_list
@@ -62,23 +62,23 @@ def filter_by_tel(my_list: list[dict]) -> list[dict]:
     logger.info("Производим поиск по патерну")
     for item in my_list:
 
-        if re.search(r'\+7 \S{3} \S{3}-\S{2}-\S{2}', str(item['Описание'])):
+        if re.search(r"\+7 \S{3} \S{3}-\S{2}-\S{2}", str(item["Описание"])):
             search_list.append(item)
     logger.info("Формирования списка по критериям и конец программы")
     return search_list
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     path_df = os.path.join(DATA_PATH, "operations.xlsx")
     df = get_data_info(path_df)
-    convert_to_dict = df.to_dict('records')
+    convert_to_dict = df.to_dict("records")
 
     # search_str = input("Введите ключевое слово для потска\n")
     # res_search_list = search_in_file(convert_to_dict, search_str)
     # print(f'Список по ключу {search_str}\n{res_search_list}')
 
     list_tel = filter_by_tel(convert_to_dict)
-    print(f'JSON данные с телефонами:\n{list_tel}')
+    print(f"JSON данные с телефонами:\n{list_tel}")
 
     # filter_list_by_name = filter_by_name(convert_to_dict)
     # print(f'Отфильтрованый список переводов физлицу:\n{filter_list_by_name}')
